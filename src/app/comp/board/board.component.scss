@@ -1,0 +1,18 @@
+.board{
+    box-shadow: 0px 0px 5px black;
+    border-radius: 10px;
+    height: 270px;
+    width: 270px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: rgb(192, 192, 192);
+}
+.piece{
+    box-shadow: 0px 0px 5px black;
+    background-color: rgb(224, 224, 224);
+    border-radius: 10px;
+    margin: 5px;
+    height: 80px;
+    width: 80px;
+}
