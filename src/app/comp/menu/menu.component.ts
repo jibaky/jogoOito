@@ -12,5 +12,12 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
+  func(){
+    this.service.func();
+  }
+  shuffle(qtd: any){
+    qtd = Math.round(Number(qtd));
+    if(Number.isNaN(qtd)) return alert("introduza um numero no input")
+    this.service.shuffle(qtd);
+  }
 }
