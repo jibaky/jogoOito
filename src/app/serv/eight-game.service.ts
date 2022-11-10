@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -6,18 +7,14 @@ import { Injectable } from '@angular/core';
 export class EightGameService {
 
   constructor() { }
-  // public board = [["","2","3"],["4","5","6"],["7","8","1"]];
-  // public board = [["1","","3"],["4","5","6"],["7","8","2"]];
-  // public board = [["1","2",""],["4","5","6"],["7","8","3"]];
-  // public board = [["1","2","3"],["","5","6"],["7","8","4"]];
-  // public board = [["1","2","3"],["4","","6"],["7","8","5"]];
-  // public board = [["1","2","3"],["4","5",""],["7","8","6"]];
-  // public board = [["1","2","3"],["4","5","6"],["","8","7"]];
-  // public board = [["1","2","3"],["4","5","6"],["7","","8"]];
   public board = [["1","2","3"],["4","5","6"],["7","8",""]];
+
+  obs = new BehaviorSubject<string[][]>( [["1","2","3"],["4","5","6"],["7","8",""]]);
+
   public iter = 0
+
   func(){
-    console.log(this.board);
+    console.table(this.board);
   }
   private getAdjPieces(i: number, j:number){
     let arr = [];
@@ -48,6 +45,8 @@ export class EightGameService {
       }
       let mod = Math.floor(Math.random() * adj.length)
       this.swap(empty, adj[mod])
+      // this.obs.next(this.board)
     }
+    this.obs.next(this.board);
   }
 }
