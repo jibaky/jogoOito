@@ -18,6 +18,8 @@ export class MenuComponent implements OnInit {
   shuffle(qtd: any){
     qtd = Math.round(Number(qtd));
     if(Number.isNaN(qtd)) return alert("introduza um numero no input")
-    this.service.shuffle(qtd);
+    for(let i = 0; i<qtd; i++){
+      setTimeout(()=>{this.service.shuffle(1);}, i*120)
+    }
   }
 }
