@@ -12,9 +12,15 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
   func(){
     this.service.func();
   }
+
+  firstHeuristic(){
+
+  }
+
   shuffle(qtd: any){
     qtd = Math.round(Number(qtd));
     if(Number.isNaN(qtd)) return alert("introduza um numero no input")
@@ -22,4 +28,5 @@ export class MenuComponent implements OnInit {
       setTimeout(()=>{this.service.shuffle(1);}, i*120)
     }
   }
+
 }
