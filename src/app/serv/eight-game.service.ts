@@ -12,13 +12,13 @@ export class EightGameService {
   public board = [
     ['1', '2', '3'],
     ['4', '5', '6'],
-    ['7', '8', ''],
+    ['7', '8', '']
   ];
 
   obs = new BehaviorSubject<string[][]>([
     ['1', '2', '3'],
     ['4', '5', '6'],
-    ['7', '8', ''],
+    ['7', '8', '']
   ]);
 
   public iter = 0;
@@ -98,7 +98,7 @@ export class EightGameService {
     if(this.arrLoop.length > mod-1 
       && this.arrLoop[this.arrLoop.length-mod][0] == piece[0] 
       && this.arrLoop[this.arrLoop.length-mod][1] == piece[1]){
-      // console.log("loop: " + mod);
+      console.log("loop: " + mod);
       return true;
       }
     else return false;
@@ -108,7 +108,7 @@ export class EightGameService {
     let distance = 9999999;
     let adj: number[][] = [];
     let empty: number[] = [];
-    let final: number[] = []
+    let final: number[] = [];
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
         if (this.board[i][j] == '') {
@@ -139,19 +139,90 @@ export class EightGameService {
   //Primeira heuristica
   firstLevelHeuristics(){
     let i = 0;
+    this.arrLoop = []
     while (!this.correctChecker()){
       i++;
-      // console.log("it " + i)
       let move = this.movementSimulator()
       if(move[1].length == 0){
         this.shuffle(1);
-        // console.log("shuffle")
         continue;
       }
       this.swap(move[0], move[1]);
       this.obs.next(this.board);
     }
+    if(i >= 765230*2) console.log(i)
     return i;
   }
-
+  //Segunda heuristica
+  secondLevelHeuristics(){
+    this.arrLoop = []
+    let i = 0;
+    let finalArr: number[][] = [];
+    let distance = 9999999;
+    let adj1: number[][] = [];
+    let empty1: number[] = [];
+    let adj2: number[][] = [];
+    let empty2: number[] = [];
+    let prev: number[] = [];
+    while(!this.correctChecker()){
+      i++;
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          if (this.board[i][j] == '') {
+            empty1 = [i, j];
+            finalArr[0] = empty1;
+            adj1 = this.getAdjPieces(i, j);
+            if(this.arrLoop.length == 0)
+              this.arrLoop.push(empty1);
+          }
+        }
+      }
+      for(let i = 0; i<adj1.length; i++){
+        this.swap(empty1, adj1[i]);
+        let dist = this.current_distance();
+        if(dist == 0){
+          this.obs.next(this.board);
+          break;
+        }
+        prev = adj1[i]
+        for (let k = 0; k < 3; k++) {
+          for (let l = 0; l < 3; l++) {
+            if (this.board[k][l] == '') {
+              empty2 = [k, l];
+              adj2 = this.getAdjPieces(k, l);
+            }
+          }
+        }
+        for(let j=0; j<adj2.length; j++){
+          // if(this.isLoop(2, adj2[j])) continue;
+          // else if(this.isLoop(4, adj2[j])) continue;
+          // else if(this.isLoop(6, adj2[j])) continue;
+          // else if(this.isLoop(8, adj2[j])) continue;
+          if(finalArr[0][0] == adj2[j][0] && finalArr[0][1] == adj2[j][1]){
+            console.log("loop: " + 2);
+            continue;
+            }
+          this.swap(empty2, adj2[j]);
+          let dist2 = this.current_distance();
+          if(dist2<distance){
+            distance = dist2;
+            finalArr[1] = prev;
+            finalArr[2] = adj2[j];
+          }
+          this.swap(empty2, adj2[j]);
+        }
+        this.swap(empty1, adj1[i]);
+      }
+      // this.arrLoop.push(finalArr[1]);
+      // this.arrLoop.push(finalArr[2]);
+      // console.table(this.arrLoop);
+      // if(this.arrLoop.length > 8) while(this.arrLoop.length > 8) this.arrLoop.shift();
+      this.swap(finalArr[0], finalArr[1]);
+      this.obs.next(this.board);
+      this.swap(finalArr[1], finalArr[2]);
+      this.obs.next(this.board);
+      // console.log(finalArr[0], finalArr[1], finalArr[2])
+    }
+    return i;
+  }
 }

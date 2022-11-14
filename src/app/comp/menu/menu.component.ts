@@ -18,6 +18,9 @@ export class MenuComponent implements OnInit {
   firstHeuristic(){
     this.iteracoes = this.service.firstLevelHeuristics()
   }
+  secondHeuristic(){
+    this.iteracoes = this.service.secondLevelHeuristics()
+  }
 
   shuffle(qtd: any){
     qtd = Math.round(Number(qtd));
