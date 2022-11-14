@@ -14,12 +14,9 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  func(){
-    this.service.func();
-  }
 
   firstHeuristic(){
-    this.iteracoes = this.service.primHeu()
+    this.iteracoes = this.service.firstLevelHeuristics()
   }
 
   shuffle(qtd: any){
