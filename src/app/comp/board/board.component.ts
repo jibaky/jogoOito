@@ -38,7 +38,6 @@ export class BoardComponent implements OnInit {
     ];
 
     this.service.obs.subscribe((newBoard) => {
-      // console.table(newBoard);
       this.updateTiles(newBoard);
     });
   }

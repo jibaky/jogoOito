@@ -9,6 +9,7 @@ import { EightGameService } from 'src/app/serv/eight-game.service';
 export class MenuComponent implements OnInit {
 
   constructor(public service: EightGameService) { }
+  iteracoes: number = 0;
 
   ngOnInit(): void {
   }
@@ -18,12 +19,13 @@ export class MenuComponent implements OnInit {
   }
 
   firstHeuristic(){
-
+    this.iteracoes = this.service.primHeu()
   }
 
   shuffle(qtd: any){
     qtd = Math.round(Number(qtd));
     if(Number.isNaN(qtd)) return alert("introduza um numero no input")
+    if(qtd == 0) qtd = 1;
     for(let i = 0; i<qtd; i++){
       setTimeout(()=>{this.service.shuffle(1);}, i*120)
     }
