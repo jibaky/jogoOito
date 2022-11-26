@@ -14,7 +14,9 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
+  printBoard(){
+    this.service.tableBoard()
+  }
   firstHeuristic(){
     this.iteracoes = this.service.firstLevelHeuristics()
   }

@@ -21,8 +21,23 @@ export class EightGameService {
     ['7', '8', '']
   ]);
 
+  // public board = [
+  //   ['2', '4', '3'],
+  //   ['5', '7', '6'],
+  //   ['1', '8', ''] // 113172/71882 iterações
+  // ];
+
+  // obs = new BehaviorSubject<string[][]>([
+  //   ['2', '4', '3'],
+  //   ['5', '7', '6'],
+  //   ['1', '8', '']
+  // ]);
+
   public iter = 0;
 
+  tableBoard(){
+    console.table(this.board);
+  }
   //retorna todas as peças a cima, baixo, esquerda e direita da peça passada como parametro
   //utilizado pra pegar quais peças podem ser trocadas com a peça fazia
   private getAdjPieces(i: number, j: number) {
@@ -94,11 +109,13 @@ export class EightGameService {
     return soma;
   }
   //Verifica se o proximo movimento terminará em loop
-  isLoop(mod: number, piece: number[]){
+  isLoop(mod: number, piece: number[], print: boolean = false){
+    // console.log(piece)
+    // console.table(this.arrLoop)
     if(this.arrLoop.length > mod-1 
       && this.arrLoop[this.arrLoop.length-mod][0] == piece[0] 
       && this.arrLoop[this.arrLoop.length-mod][1] == piece[1]){
-      console.log("loop: " + mod);
+      if(print) console.log("loop: " + mod);
       return true;
       }
     else return false;
@@ -134,7 +151,7 @@ export class EightGameService {
     }
     this.arrLoop.push(final);
     if(this.arrLoop.length > 8) this.arrLoop.shift();
-    return [empty, final];
+    return {empty:empty, final:final, distance:distance};
   }
   //Primeira heuristica
   firstLevelHeuristics(){
@@ -143,86 +160,97 @@ export class EightGameService {
     while (!this.correctChecker()){
       i++;
       let move = this.movementSimulator()
-      if(move[1].length == 0){
+      if(move.final.length == 0){
+        console.log("SHUFFLE")
         this.shuffle(1);
         continue;
       }
-      this.swap(move[0], move[1]);
+      this.swap(move.empty, move.final);
+      console.log("actual full on movement");
       this.obs.next(this.board);
     }
-    if(i >= 765230*2) console.log(i)
+    if(i >= 765232/2) console.log(i)
+    console.log("FIM");
     return i;
+  }
+  //Função para simular movimento pra heuristica 2
+  movementSimulator2(){
+    let distance = 9999999;
+    let adj: number[][] = [];
+    let empty: number[] = [];
+    let final: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (this.board[i][j] == '') {
+          empty = [i, j];
+          adj = this.getAdjPieces(i, j);
+          if(this.arrLoop.length == 0)
+            this.arrLoop.push(empty);
+        }
+      }
+    }
+    for(let i=0; i<adj.length; i++){
+
+      if(this.isLoop(1, adj[i])) continue;
+      else if(this.isLoop(3, adj[i])) continue;
+      this.swap(empty, adj[i]);
+      let dist = this.current_distance();
+      if(dist<distance){
+        distance = dist
+        final = adj[i]
+      }
+      this.swap(empty, adj[i]);
+    }
+    return {empty:empty, final:final, distance:distance};
   }
   //Segunda heuristica
   secondLevelHeuristics(){
-    this.arrLoop = []
     let i = 0;
-    let finalArr: number[][] = [];
-    let distance = 9999999;
-    let adj1: number[][] = [];
-    let empty1: number[] = [];
-    let adj2: number[][] = [];
-    let empty2: number[] = [];
-    let prev: number[] = [];
+    this.arrLoop = [];
     while(!this.correctChecker()){
+      let empty: number[] = [];
+      let final: number[] = [];
       i++;
-      for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-          if (this.board[i][j] == '') {
-            empty1 = [i, j];
-            finalArr[0] = empty1;
-            adj1 = this.getAdjPieces(i, j);
+      let distance = 9999999;
+      let adj: number[][] = [];  
+      for (let j = 0; j < 3; j++) {
+        for (let k = 0; k < 3; k++) {
+          if (this.board[j][k] == '') {
+            empty = [j, k];
+            adj = this.getAdjPieces(j, k);
             if(this.arrLoop.length == 0)
-              this.arrLoop.push(empty1);
+            this.arrLoop.push(empty);
           }
         }
       }
-      for(let i = 0; i<adj1.length; i++){
-        this.swap(empty1, adj1[i]);
-        let dist = this.current_distance();
+      for(let j=0; j<adj.length; j++){
+        if(this.isLoop(2, adj[j])) continue;
+        this.swap(empty, adj[j]);
+        const dist = this.current_distance()
         if(dist == 0){
           this.obs.next(this.board);
-          break;
+          // console.log("FIM INSIDE");
+          return i;
         }
-        prev = adj1[i]
-        for (let k = 0; k < 3; k++) {
-          for (let l = 0; l < 3; l++) {
-            if (this.board[k][l] == '') {
-              empty2 = [k, l];
-              adj2 = this.getAdjPieces(k, l);
-            }
-          }
+        let move = this.movementSimulator2()
+        if(move.final.length == 0){
+          // console.log("SHUFFLE")
+          this.shuffle(1);
+          continue;
         }
-        for(let j=0; j<adj2.length; j++){
-          // if(this.isLoop(2, adj2[j])) continue;
-          // else if(this.isLoop(4, adj2[j])) continue;
-          // else if(this.isLoop(6, adj2[j])) continue;
-          // else if(this.isLoop(8, adj2[j])) continue;
-          if(finalArr[0][0] == adj2[j][0] && finalArr[0][1] == adj2[j][1]){
-            console.log("loop: " + 2);
-            continue;
-            }
-          this.swap(empty2, adj2[j]);
-          let dist2 = this.current_distance();
-          if(dist2<distance){
-            distance = dist2;
-            finalArr[1] = prev;
-            finalArr[2] = adj2[j];
-          }
-          this.swap(empty2, adj2[j]);
+        if(move.distance < distance){
+          distance = move.distance;
+          final = move.empty;
         }
-        this.swap(empty1, adj1[i]);
+        this.swap(empty, adj[j]);
       }
-      // this.arrLoop.push(finalArr[1]);
-      // this.arrLoop.push(finalArr[2]);
-      // console.table(this.arrLoop);
-      // if(this.arrLoop.length > 8) while(this.arrLoop.length > 8) this.arrLoop.shift();
-      this.swap(finalArr[0], finalArr[1]);
+      this.arrLoop.push(final);
+      if(this.arrLoop.length > 8) this.arrLoop.shift();
+      this.swap(empty, final);
+      // console.log("actual full on movement");
       this.obs.next(this.board);
-      this.swap(finalArr[1], finalArr[2]);
-      this.obs.next(this.board);
-      // console.log(finalArr[0], finalArr[1], finalArr[2])
     }
+    // console.log("FIM OUTSIDE");
     return i;
   }
 }
