@@ -24,20 +24,17 @@ export class EightGameService {
   // public board = [
   //   ['2', '4', '3'],
   //   ['5', '7', '6'],
-  //   ['1', '8', ''] // 113172/71882 iterações
+  //   ['1', '8', ''] // controle
   // ];
 
   // obs = new BehaviorSubject<string[][]>([
   //   ['2', '4', '3'],
   //   ['5', '7', '6'],
-  //   ['1', '8', '']
+  //   ['1', '8', ''] // controle
   // ]);
 
   public iter = 0;
 
-  tableBoard(){
-    console.table(this.board);
-  }
   //retorna todas as peças a cima, baixo, esquerda e direita da peça passada como parametro
   //utilizado pra pegar quais peças podem ser trocadas com a peça fazia
   private getAdjPieces(i: number, j: number) {
@@ -121,7 +118,7 @@ export class EightGameService {
     else return false;
   }
   //Função para simular movimento
-  movementSimulator(){
+  movementSimulatorFirst(){
     let distance = 9999999;
     let adj: number[][] = [];
     let empty: number[] = [];
@@ -153,28 +150,27 @@ export class EightGameService {
     if(this.arrLoop.length > 8) this.arrLoop.shift();
     return {empty:empty, final:final, distance:distance};
   }
-  //Primeira heuristica
+  // Heuristica de análise em primeiro nível
   firstLevelHeuristics(){
     let i = 0;
     this.arrLoop = []
     while (!this.correctChecker()){
       i++;
-      let move = this.movementSimulator()
+      let move = this.movementSimulatorFirst()
       if(move.final.length == 0){
-        console.log("SHUFFLE")
+        // console.log("SHUFFLE")
         this.shuffle(1);
         continue;
       }
       this.swap(move.empty, move.final);
-      console.log("actual full on movement");
+      // console.log("actual full on movement");
       this.obs.next(this.board);
     }
-    if(i >= 765232/2) console.log(i)
-    console.log("FIM");
+    // console.log("FIM");
     return i;
   }
   //Função para simular movimento pra heuristica 2
-  movementSimulator2(){
+  movementSimulatorSecond(){
     let distance = 9999999;
     let adj: number[][] = [];
     let empty: number[] = [];
@@ -203,14 +199,14 @@ export class EightGameService {
     }
     return {empty:empty, final:final, distance:distance};
   }
-  //Segunda heuristica
+  // Heuristica de análise em segundo nível
   secondLevelHeuristics(){
     let i = 0;
     this.arrLoop = [];
     while(!this.correctChecker()){
+      i++;
       let empty: number[] = [];
       let final: number[] = [];
-      i++;
       let distance = 9999999;
       let adj: number[][] = [];  
       for (let j = 0; j < 3; j++) {
@@ -229,12 +225,10 @@ export class EightGameService {
         const dist = this.current_distance()
         if(dist == 0){
           this.obs.next(this.board);
-          // console.log("FIM INSIDE");
           return i;
         }
-        let move = this.movementSimulator2()
+        let move = this.movementSimulatorSecond()
         if(move.final.length == 0){
-          // console.log("SHUFFLE")
           this.shuffle(1);
           continue;
         }
@@ -247,10 +241,8 @@ export class EightGameService {
       this.arrLoop.push(final);
       if(this.arrLoop.length > 8) this.arrLoop.shift();
       this.swap(empty, final);
-      // console.log("actual full on movement");
       this.obs.next(this.board);
     }
-    // console.log("FIM OUTSIDE");
     return i;
   }
 }
