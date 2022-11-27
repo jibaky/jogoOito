@@ -25,7 +25,7 @@ export class MenuComponent implements OnInit {
     if(Number.isNaN(qtd)) return alert("introduza um numero no input")
     if(qtd == 0) qtd = 1;
     for(let i = 0; i<qtd; i++){
-      setTimeout(()=>{this.service.shuffle(1);}, i*60)
+      setTimeout(()=>{this.service.shuffle(1);}, i*80)
     }
   }
 

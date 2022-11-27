@@ -2,3 +2,13 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-focused .mat-form-field-label{
+    color: #9DE4E4 !important;
+}
+.mat-form-field-underline{
+    color: #9DE4E4 !important;
+}
+.mat-form-field-ripple{
+    background-color: #9DE4E4 !important;
+}

@@ -1,10 +1,11 @@
-<!-- <button mat-raised-button color="accent" (click)="printBoard()">log tabuleiro</button><br> -->
-<button mat-raised-button color="accent" (click)="shuffle(qtdShuffle.value)">embaralhar</button>
-<input #qtdShuffle><br>
-<button mat-raised-button color="accent" (click)="firstHeuristic()">Heurística 1</button>
-<button mat-raised-button color="accent" (click)="secondHeuristic()">Heurística 2</button>
-<div>
-    iterações = {{iteracoes}}
+<button mat-raised-button (click)="shuffle(qtdShuffle.value)">Embaralhar</button>
+<!-- <input class="iterationInput" #qtdShuffle size="15" placeholder="número de iterações"><br> -->
+<mat-form-field>
+    <mat-label>Número de iterações</mat-label>
+    <input matInput class="iterationInput" value="20" #qtdShuffle>
+</mat-form-field><br>
+<button mat-raised-button (click)="firstHeuristic()">Resolver por análise em um nível</button><br>
+<button mat-raised-button (click)="secondHeuristic()">Resolver por análise em dois níveis</button>
+<div style="color: white; margin: 5px;">
+    Iterações = {{iteracoes}}
 </div>
-<!-- <button mat-raised-button color="accent">teste 3</button><br>
-<button mat-raised-button color="accent">teste 4</button> -->

@@ -7,7 +7,8 @@
     flex-wrap: wrap;
     height: 270px;
     width: 270px;
-    background-color: rgb(192, 192, 192);
+    // background-color: rgb(192, 192, 192);
+    background-color: #424242;
 }
 .board .piece{
     box-shadow: 0px 0px 5px black;
@@ -18,10 +19,12 @@
     justify-content: center;
     top: 0px;
     left: 0px;
-    background-color: rgb(224, 224, 224);
+    // background-color: rgb(224, 224, 224);
+    background-color: #5e5e5e;
+    color: white;
     border-radius: 10px;
     margin: 5px;
     height: 80px;
     width: 80px;
-    transition: all 0.06s ease-in;
+    transition: all 0.08s ease-in;
 }

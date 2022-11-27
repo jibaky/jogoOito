@@ -107,8 +107,6 @@ export class EightGameService {
   }
   //Verifica se o proximo movimento terminará em loop
   isLoop(mod: number, piece: number[], print: boolean = false){
-    // console.log(piece)
-    // console.table(this.arrLoop)
     if(this.arrLoop.length > mod-1 
       && this.arrLoop[this.arrLoop.length-mod][0] == piece[0] 
       && this.arrLoop[this.arrLoop.length-mod][1] == piece[1]){
@@ -118,7 +116,7 @@ export class EightGameService {
     else return false;
   }
   //Função para simular movimento
-  movementSimulatorFirst(){
+  movementSimulatorLevelOne(){
     let distance = 9999999;
     let adj: number[][] = [];
     let empty: number[] = [];
@@ -156,7 +154,7 @@ export class EightGameService {
     this.arrLoop = []
     while (!this.correctChecker()){
       i++;
-      let move = this.movementSimulatorFirst()
+      let move = this.movementSimulatorLevelOne()
       if(move.final.length == 0){
         // console.log("SHUFFLE")
         this.shuffle(1);
@@ -170,7 +168,7 @@ export class EightGameService {
     return i;
   }
   //Função para simular movimento pra heuristica 2
-  movementSimulatorSecond(){
+  movementSimulatorLower(){
     let distance = 9999999;
     let adj: number[][] = [];
     let empty: number[] = [];
@@ -200,49 +198,53 @@ export class EightGameService {
     return {empty:empty, final:final, distance:distance};
   }
   // Heuristica de análise em segundo nível
+  movementSimulatorHigher(){
+    let empty: number[] = [];
+    let final: number[] = [];
+    let distance = 9999999;
+    let adj: number[][] = [];  
+    for (let j = 0; j < 3; j++) {
+      for (let k = 0; k < 3; k++) {
+        if (this.board[j][k] == '') {
+          empty = [j, k];
+          adj = this.getAdjPieces(j, k);
+          if(this.arrLoop.length == 0)
+            this.arrLoop.push(empty);
+        }
+      }
+    }
+    for(let j=0; j<adj.length; j++){
+      if(this.isLoop(2, adj[j])) continue;
+      this.swap(empty, adj[j]);
+      const dist = this.current_distance()
+      if(dist == 0){
+        this.obs.next(this.board);
+        return;
+      }
+      let move = this.movementSimulatorLower()
+      if(move.final.length == 0){
+        this.shuffle(1);
+        continue;
+      }
+      if(move.distance < distance){
+        distance = move.distance;
+        final = move.empty;
+      }
+      this.swap(empty, adj[j]);
+    }
+    this.arrLoop.push(final);
+    if(this.arrLoop.length > 8) this.arrLoop.shift();
+    this.swap(empty, final);
+    return
+  }
   secondLevelHeuristics(){
     let i = 0;
     this.arrLoop = [];
     while(!this.correctChecker()){
       i++;
-      let empty: number[] = [];
-      let final: number[] = [];
-      let distance = 9999999;
-      let adj: number[][] = [];  
-      for (let j = 0; j < 3; j++) {
-        for (let k = 0; k < 3; k++) {
-          if (this.board[j][k] == '') {
-            empty = [j, k];
-            adj = this.getAdjPieces(j, k);
-            if(this.arrLoop.length == 0)
-            this.arrLoop.push(empty);
-          }
-        }
-      }
-      for(let j=0; j<adj.length; j++){
-        if(this.isLoop(2, adj[j])) continue;
-        this.swap(empty, adj[j]);
-        const dist = this.current_distance()
-        if(dist == 0){
-          this.obs.next(this.board);
-          return i;
-        }
-        let move = this.movementSimulatorSecond()
-        if(move.final.length == 0){
-          this.shuffle(1);
-          continue;
-        }
-        if(move.distance < distance){
-          distance = move.distance;
-          final = move.empty;
-        }
-        this.swap(empty, adj[j]);
-      }
-      this.arrLoop.push(final);
-      if(this.arrLoop.length > 8) this.arrLoop.shift();
-      this.swap(empty, final);
+      this.movementSimulatorHigher();
       this.obs.next(this.board);
     }
-    return i;
+    return i
   }
 }
