@@ -4,8 +4,10 @@
     <mat-label>Número de iterações</mat-label>
     <input matInput class="iterationInput" value="20" #qtdShuffle>
 </mat-form-field><br>
+<button mat-raised-button (click)="random()">Resolver por força bruta</button><br>
 <button mat-raised-button (click)="firstHeuristic()">Resolver por análise em um nível</button><br>
-<button mat-raised-button (click)="secondHeuristic()">Resolver por análise em dois níveis</button>
+<button mat-raised-button (click)="secondHeuristic()">Resolver por análise em dois níveis</button><br>
+<button mat-raised-button (click)="thirdHeuristic()">Resolver pela heuristica personalizada</button>
 <div style="color: white; margin: 5px;">
     Iterações = {{iteracoes}}
 </div>

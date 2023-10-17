@@ -13,11 +13,18 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  random(){
+    this.iteracoes = this.service.random()
+  }
   firstHeuristic(){
     this.iteracoes = this.service.firstLevelHeuristics()
   }
   secondHeuristic(){
     this.iteracoes = this.service.secondLevelHeuristics()
+  }
+
+  thirdHeuristic(){
+    this.iteracoes = this.service.thirdHeuristics();
   }
 
   shuffle(qtd: any){

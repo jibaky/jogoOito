@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { gameState } from '../models/gameState.model';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class EightGameService {
 
   arrLoop: number[][] = [];
@@ -88,7 +90,15 @@ export class EightGameService {
       return true;
     else return false;
   }
-
+  //resolve por força bruta
+  random(): number{
+    let i = 0;
+    while(this.correctChecker() == false){
+      this.shuffle(1);
+      i++;
+    }
+    return i;
+  }
   //Verifica a distancia das peças de suas posições corretas
   current_distance(): number {
     let soma: number = 0;
@@ -246,5 +256,32 @@ export class EightGameService {
       this.obs.next(this.board);
     }
     return i
+  }
+  thirdHeuristics(){
+    let i = 0;
+    this.arrLoop = []
+
+    let initState = new gameState(this.board,null,this.current_distance());
+    let currentState = initState;
+    let stateArr = []
+    for(let i = 0; i < 1000000; i++){
+      if(currentState.goal == true) break;
+      currentState.addNextState();
+      for(let j = 0; j<currentState.nextState.length; j++){
+        stateArr.push(currentState.nextState[j]);
+      }
+      currentState = stateArr.shift();
+    }
+    stateArr = [];
+    while(currentState != null){
+      stateArr.push(currentState);
+      currentState = currentState.prevState;
+    }
+    let finalMovements = stateArr.length
+    for(let i = 0; i<finalMovements; i++){
+      this.board = JSON.parse(JSON.stringify(stateArr.pop().board));
+      this.obs.next(this.board);
+    }
+    return finalMovements
   }
 }
