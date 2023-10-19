@@ -15,12 +15,15 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
   }
   random(){
+    this.nodes = 0;
     this.iteracoes = this.service.random()
   }
   firstHeuristic(){
+    this.nodes = 0;
     this.iteracoes = this.service.firstLevelHeuristics()
   }
   secondHeuristic(){
+    this.nodes = 0;
     this.iteracoes = this.service.secondLevelHeuristics()
   }
 
