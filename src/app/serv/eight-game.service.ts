@@ -11,7 +11,7 @@ export class EightGameService {
   arrLoop: number[][] = [];
 
   constructor() {}
-  
+
   public board = [
     ['1', '2', '3'],
     ['4', '5', '6'],
@@ -37,15 +37,27 @@ export class EightGameService {
   // ]);
 
   //   public board = [
-  //   ['5','4','6'],
-  //   ['8','2','1'],
+  //   ['5', '4', '6'],
+  //   ['8', '2', '1'],
   //   ['3', '7', ''] // controle2
   // ];
 
   // obs = new BehaviorSubject<string[][]>([
-  //   ['5','4','6'],
-  //   ['8','2','1'],
+  //   ['5', '4', '6'],
+  //   ['8', '2', '1'],
   //   ['3', '7', ''] // controle2
+  // ]);
+
+  //   public board = [
+  //   ['', '8', '7'],
+  //   ['6', '5', '4'],
+  //   ['3', '2', '1'] // controle3
+  // ];
+
+  // obs = new BehaviorSubject<string[][]>([
+  //   ['', '8', '7'],
+  //   ['6', '5', '4'],
+  //   ['3', '2', '1'] // controle3
   // ]);
 
   public iter = 0;
