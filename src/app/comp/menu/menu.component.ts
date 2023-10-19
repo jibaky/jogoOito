@@ -10,6 +10,7 @@ export class MenuComponent implements OnInit {
 
   constructor(public service: EightGameService) { }
   iteracoes: number = 0;
+  nodes: number = 0;
 
   ngOnInit(): void {
   }
@@ -23,8 +24,12 @@ export class MenuComponent implements OnInit {
     this.iteracoes = this.service.secondLevelHeuristics()
   }
 
-  thirdHeuristic(){
-    this.iteracoes = this.service.thirdHeuristics();
+  lenSearch(qtd: any){
+    qtd = Math.round(Number(qtd));
+    if(Number.isNaN(qtd)) return alert("introduza um numero no input")
+    let result = this.service.lengthSearch(qtd);
+    this.iteracoes = result.iterations;
+    this.nodes = result.nodes;
   }
 
   shuffle(qtd: any){

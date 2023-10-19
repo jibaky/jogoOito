@@ -7,7 +7,12 @@
 <button mat-raised-button (click)="random()">Resolver por força bruta</button><br>
 <button mat-raised-button (click)="firstHeuristic()">Resolver por análise em um nível</button><br>
 <button mat-raised-button (click)="secondHeuristic()">Resolver por análise em dois níveis</button><br>
-<button mat-raised-button (click)="thirdHeuristic()">Resolver pela heuristica personalizada</button>
+<button mat-raised-button (click)="lenSearch(qtdNodes.value)">Resolver por busca em largura</button>
+<mat-form-field>
+    <mat-label>Restrição da busca</mat-label>
+    <input matInput class="iterationInput" value="150000" #qtdNodes>
+</mat-form-field>
 <div style="color: white; margin: 5px;">
+    Nós explorados = {{nodes}}<br>
     Iterações = {{iteracoes}}
 </div>

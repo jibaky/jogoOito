@@ -11,6 +11,7 @@ export class EightGameService {
   arrLoop: number[][] = [];
 
   constructor() {}
+  
   public board = [
     ['1', '2', '3'],
     ['4', '5', '6'],
@@ -33,6 +34,18 @@ export class EightGameService {
   //   ['2', '4', '3'],
   //   ['5', '7', '6'],
   //   ['1', '8', ''] // controle
+  // ]);
+
+  //   public board = [
+  //   ['5','4','6'],
+  //   ['8','2','1'],
+  //   ['3', '7', ''] // controle2
+  // ];
+
+  // obs = new BehaviorSubject<string[][]>([
+  //   ['5','4','6'],
+  //   ['8','2','1'],
+  //   ['3', '7', ''] // controle2
   // ]);
 
   public iter = 0;
@@ -257,31 +270,50 @@ export class EightGameService {
     }
     return i
   }
-  thirdHeuristics(){
-    let i = 0;
-    this.arrLoop = []
-
+  lengthSearch(qtd: number){
     let initState = new gameState(this.board,null,this.current_distance());
     let currentState = initState;
+    let closestState = currentState;
     let stateArr = []
-    for(let i = 0; i < 1000000; i++){
-      if(currentState.goal == true) break;
+    let amount: number;
+    for(amount = 0; amount < qtd; amount++){
+      if(currentState.distance == 0) break;
+      if(currentState.distance <= closestState.distance) closestState = currentState;
       currentState.addNextState();
-      for(let j = 0; j<currentState.nextState.length; j++){
-        stateArr.push(currentState.nextState[j]);
+      for(const element of currentState.nextState){
+        stateArr.push(element);
       }
       currentState = stateArr.shift();
     }
-    stateArr = [];
+    if(amount == qtd){
+      while(stateArr.length != 0){
+        amount++;
+        let remainingState = stateArr.shift();
+        if(remainingState.distance == 0){
+          stateArr = [];
+          currentState = remainingState;
+          break;
+        }
+        if(remainingState.distance <= closestState.distance) closestState = remainingState;
+      }
+      if(currentState.distance != 0){
+        currentState = closestState;
+        alert("resolução não encontrada, retornando estado com menor distância: " + currentState.distance)
+      }
+    }
+    else stateArr = []
+    console.log(currentState.distance)
     while(currentState != null){
       stateArr.push(currentState);
       currentState = currentState.prevState;
     }
     let finalMovements = stateArr.length
+
     for(let i = 0; i<finalMovements; i++){
       this.board = JSON.parse(JSON.stringify(stateArr.pop().board));
       this.obs.next(this.board);
     }
-    return finalMovements
+    
+    return {iterations:finalMovements, nodes: amount}
   }
 }

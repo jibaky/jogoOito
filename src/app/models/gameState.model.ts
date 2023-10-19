@@ -1,6 +1,5 @@
 export class gameState{
     board: String[][];
-    goal: boolean;
     distance: number;
     empty: number[];
     adj: number[][];
@@ -9,7 +8,6 @@ export class gameState{
 
     constructor(board: String[][], prevState: gameState, dist: number){
       this.board = JSON.parse(JSON.stringify(board));
-      this.goal = this.correctChecker();
       this.prevState = prevState;
       this.nextState = []
       this.distance = dist;
@@ -22,6 +20,7 @@ export class gameState{
       }
       this.adj = this.getAdjPieces(this.empty[0],this.empty[1]);
     }
+    
     private equalGrandpa(): boolean {
       let dad = this.prevState;
       if(dad == null) return false;
@@ -38,24 +37,9 @@ export class gameState{
       ) return true;
       else return false;
     }
-    private correctChecker(): boolean {
-      if (
-        this.board[0][0] == '1' &&
-        this.board[0][1] == '2' &&
-        this.board[0][2] == '3' &&
-        this.board[1][0] == '4' &&
-        this.board[1][1] == '5' &&
-        this.board[1][2] == '6' &&
-        this.board[2][0] == '7' &&
-        this.board[2][1] == '8' &&
-        this.board[2][2] == ''
-      ) return true;
-      else return false;
-    }
 
     addNextState(){
       for(let i = 0; i < this.adj.length; i++){
-        // console.log('b')
         this.swap(this.empty,this.adj[i]);
         if(this.equalGrandpa()){
           this.swap(this.empty,this.adj[i]);
